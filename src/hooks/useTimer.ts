@@ -1,0 +1,86 @@
+import { useEffect, useState, useCallback, useRef } from 'react';
+import useTimerStore from '../store/timerStore';
+
+export function useTimer() {
+  const {
+    time,
+    rest,
+    repetitions,
+    isRunning,
+    isRestPeriod,
+    currentRep,
+    resetTrigger,
+    actions,
+  } = useTimerStore();
+
+  const [currentTime, setCurrentTime] = useState(() => isRestPeriod ? rest : time);
+  const intervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isRunning && currentTime > 0) {
+      intervalRef.current = setInterval(() => {
+        setCurrentTime((prev) => {
+          if (prev <= 1) {
+            setTimeout(() => {
+              if (isRestPeriod) {
+                if (currentRep < repetitions) {
+                  actions.nextRep();
+                } else {
+                  actions.pause();
+                  actions.reset();
+                }
+              } else {
+                actions.enterRestPeriod();
+              }
+            }, 0);
+            
+            if (isRestPeriod) {
+              return currentRep < repetitions ? time : 0;
+            } else {
+              return rest;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRunning, currentTime, isRestPeriod, time, rest, currentRep, repetitions, actions]);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    setCurrentTime(isRestPeriod ? rest : time);
+  }, [time, rest, isRestPeriod, resetTrigger]);
+
+  const isWarning = useCallback(() => {
+    return currentTime <= 5 && currentTime > 0;
+  }, [currentTime]);
+
+  const reset = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    actions.reset();
+  }, [actions]);
+
+  return {
+    currentTime,
+    currentRep,
+    isWarning,
+    start: actions.start,
+    pause: actions.pause,
+    resume: actions.resume,
+    reset,
+    setTime: actions.setTime,
+    setRest: actions.setRest,
+    setRepetitions: actions.setRepetitions,
+  };
+}
+
+export default useTimer;

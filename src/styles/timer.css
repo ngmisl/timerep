@@ -1,0 +1,179 @@
+.timer-display {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 16px;
+  background-color: var(--bg-secondary);
+  transition: all 0.3s ease;
+}
+
+.timer-display.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border-radius: 0;
+  background-color: var(--bg-primary);
+}
+
+.timer-display.fullscreen.workout {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1e3a5f 100%);
+}
+
+.timer-display.fullscreen.rest {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1e4d2f 100%);
+}
+
+.timer-display.fullscreen .timer-time {
+  font-size: 12rem;
+}
+
+.timer-display.fullscreen.workout .timer-time {
+  color: var(--workout-color);
+}
+
+.timer-display.fullscreen.rest .timer-time {
+  color: var(--rest-color);
+}
+
+.timer-display.fullscreen .timer-label {
+  font-size: 2rem;
+}
+
+.timer-time {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-label {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.timer-display.warning {
+  animation: flicker 0.5s infinite;
+  border: 2px solid var(--warning);
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 640px) {
+  .timer-time {
+    font-size: 4rem;
+  }
+  
+  .timer-display.fullscreen .timer-time {
+    font-size: 8rem;
+  }
+  
+  .timer-display.fullscreen .timer-label {
+    font-size: 1.5rem;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.controls.fullscreen {
+  position: fixed;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  padding: 0 2rem;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setting-group input {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .settings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .setting-group {
+    grid-column: span 1;
+  }
+}
+
+.footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.footer p {
+  margin: 0;
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.footer .heart {
+  color: var(--error);
+  display: inline-block;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(1.1);
+  }
+  20%, 40% {
+    transform: scale(1);
+  }
+}
