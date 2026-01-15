@@ -23,27 +23,24 @@ export function useTimer() {
           if (prev <= 1) {
             setTimeout(() => {
               if (isRestPeriod) {
-                if (currentRep < repetitions) {
-                  actions.nextRep();
-                } else {
-                  actions.pause();
-                  actions.reset();
-                }
+                // Rest period ended - just exit rest and start next workout
+                actions.nextRep();
               } else {
-                // Check if this is the final rep
+                // Workout ended - check if this is the final rep
                 if (currentRep >= repetitions) {
+                  // Final rep completed - stop
                   actions.pause();
                   actions.reset();
                 } else {
+                  // Not final rep - enter rest period
                   actions.enterRestPeriod();
                 }
               }
             }, 0);
 
             if (isRestPeriod) {
-              return currentRep < repetitions ? time : 0;
+              return time;
             } else {
-              // Return rest time only if not the final rep
               return currentRep >= repetitions ? 0 : rest;
             }
           }
