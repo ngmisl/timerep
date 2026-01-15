@@ -16,37 +16,48 @@ export function useTimer() {
   const [currentTime, setCurrentTime] = useState(() => isRestPeriod ? rest : time);
   const intervalRef = useRef<number | null>(null);
 
+  // Reset time when period changes or settings change
   useEffect(() => {
-    if (isRunning && currentTime > 0) {
+    setCurrentTime(isRestPeriod ? rest : time);
+  }, [isRestPeriod, time, rest, resetTrigger]);
+
+  // Main timer interval
+  useEffect(() => {
+    if (isRunning) {
       intervalRef.current = setInterval(() => {
         setCurrentTime((prev) => {
           if (prev <= 1) {
-            setTimeout(() => {
-              if (isRestPeriod) {
-                // Rest period ended - just exit rest and start next workout
+            // Timer reached zero - handle transition
+            if (isRestPeriod) {
+              // Rest ended - move to next workout
+              if (currentRep < repetitions) {
                 actions.nextRep();
               } else {
-                // Workout ended - check if this is the final rep
-                if (currentRep >= repetitions) {
-                  // Final rep completed - stop
-                  actions.pause();
-                  actions.reset();
-                } else {
-                  // Not final rep - enter rest period
-                  actions.enterRestPeriod();
-                }
+                // All reps complete
+                actions.pause();
+                actions.reset();
               }
-            }, 0);
-
-            if (isRestPeriod) {
-              return time;
             } else {
-              return currentRep >= repetitions ? 0 : rest;
+              // Workout ended
+              if (currentRep >= repetitions) {
+                // This was the final rep - stop
+                actions.pause();
+                actions.reset();
+              } else {
+                // More reps to go - enter rest
+                actions.enterRestPeriod();
+              }
             }
+            return 0; // Will be reset by the other useEffect when state changes
           }
           return prev - 1;
         });
       }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
 
     return () => {
@@ -54,12 +65,7 @@ export function useTimer() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, currentTime, isRestPeriod, time, rest, currentRep, repetitions, actions]);
-
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    setCurrentTime(isRestPeriod ? rest : time);
-  }, [time, rest, isRestPeriod, resetTrigger]);
+  }, [isRunning, isRestPeriod, currentRep, repetitions, actions]);
 
   const isWarning = useCallback(() => {
     return currentTime <= 5 && currentTime > 0;
