@@ -30,14 +30,21 @@ export function useTimer() {
                   actions.reset();
                 }
               } else {
-                actions.enterRestPeriod();
+                // Check if this is the final rep
+                if (currentRep >= repetitions) {
+                  actions.pause();
+                  actions.reset();
+                } else {
+                  actions.enterRestPeriod();
+                }
               }
             }, 0);
-            
+
             if (isRestPeriod) {
               return currentRep < repetitions ? time : 0;
             } else {
-              return rest;
+              // Return rest time only if not the final rep
+              return currentRep >= repetitions ? 0 : rest;
             }
           }
           return prev - 1;

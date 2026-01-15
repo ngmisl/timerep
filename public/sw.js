@@ -1,7 +1,13 @@
-const CACHE_NAME = 'timerep-v1';
+const CACHE_NAME = 'timerep-v2';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/icon.svg',
+  '/favicon-16x16.png',
+  '/favicon-32x32.png',
 ];
 
 self.addEventListener('install', (event) => {

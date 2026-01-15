@@ -2,10 +2,14 @@ import TimerDisplay from './components/TimerDisplay';
 import Controls from './components/Controls';
 import Settings from './components/Settings';
 import useTimerStore from './store/timerStore';
+import useWakeLock from './hooks/useWakeLock';
 import './styles/timer.css';
 
 function App() {
   const { isRestPeriod, repetitions, isRunning } = useTimerStore();
+
+  // Keep screen awake while timer is running
+  useWakeLock(isRunning);
 
   return (
     <div className="app">
