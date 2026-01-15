@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timerep-v2';
+const CACHE_NAME = 'timerep-v4';
 const urlsToCache = [
   '/',
   '/index.html',

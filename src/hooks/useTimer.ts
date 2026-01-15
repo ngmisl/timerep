@@ -26,8 +26,8 @@ export function useTimer() {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setCurrentTime((prev) => {
-          if (prev <= 1) {
-            // Timer reached zero - handle transition
+          if (prev === 1) {
+            // Timer reached 1 second - handle transition
             if (isRestPeriod) {
               // Rest ended - move to next workout
               if (currentRep < repetitions) {
@@ -48,9 +48,8 @@ export function useTimer() {
                 actions.enterRestPeriod();
               }
             }
-            return 0; // Will be reset by the other useEffect when state changes
           }
-          return prev - 1;
+          return prev > 0 ? prev - 1 : 0;
         });
       }, 1000);
     } else {
